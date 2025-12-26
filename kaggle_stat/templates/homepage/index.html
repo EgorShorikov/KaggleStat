@@ -1,12 +1,24 @@
 {% extends "base.html" %}
+{% load static %}
+
 
 {% block content %}
-    <div class="card" style="width: 18rem;">
-    	<img src="..." class="card-img-top" alt="...">
-			<div class="card-body">
-				<h5 class="card-title">Some Competition</h5>
-				<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-				<a href="#" class="btn btn-primary">More Info</a>
+<div class='container'>
+	<div class='row'>
+		{% for card in cards %}
+		<div class="col-6 col-md-4 my-3">
+			<div class="card h-100" style="height: 15rem; width: 20rem;">
+				<img src="{% static 'img/test.jpg' %}" class="card-img-top" alt="...">
+				<div class="card-body">
+					<h6 class="card-title">{{ card.title|truncatechars:60 }}</h6>
+					<p class="card-text">{{ card.text|truncatechars:100 }}</p>
+				</div>
+				<div class="card-footer">
+					<a href="#" class="btn btn-primary">More Info</a>
+				</div>
 			</div>
 		</div>
+		{% endfor %}
+	</div>
+</div>
 {% endblock content %}
