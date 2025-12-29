@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from kaggle_stat import kaggle_service
 
 
 # Вместо словаря используйте список словарей

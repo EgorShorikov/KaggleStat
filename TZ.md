@@ -21,7 +21,7 @@
 
 ### 1. Contest (Соревнование)
 Основная сущность соревнования Kaggle.
--   `kaggle_uid` (CharField): Уникальный идентификатор контеста
+-   `kaggle_id` (CharField): Уникальный идентификатор контеста
 -   `title` (CharField): Название соревнования
 -   `deadline` (DateTimeField): Срок окончания
 -   `participant_count` (IntegerField): Количество участников

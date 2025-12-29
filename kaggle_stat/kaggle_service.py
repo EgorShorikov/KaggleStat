@@ -1,81 +1,74 @@
-import kaggle
-from kaggle.api.kaggle_api_extended import KaggleApi, ApiGetLeaderboardRequest, ApiCompetition
-from kagglesdk.competitions.services.competition_api_service import CompetitionApiClient
+from kaggle.api.kaggle_api_extended import KaggleApi, ApiGetLeaderboardRequest
 import time
-api = KaggleApi()
-api.authenticate()
 
 
-# comp_ref = competitions.competitions[0].ref
-# id (int)
-#     ref (str)
-#     title (str)
-#     url (str)
-cnt = 0
-cnt1 = 0
-token = None
-comp = ApiCompetition()
-a = api.competition_leaderboard_view
-comp.submissions_disabled = False
-# competitions = api.competitions_list(page=4)
-for page in range(1, 20):
-    print(page)
-    competitions = api.competitions_list(page=page)
-    for x in range(len(competitions.competitions)):
-        if competitions.competitions[x].submissions_disabled == True:
-            print(competitions.competitions[x].url.split('/')[-1])
-    time.sleep(1)
-    # print(competitions.competitions[x].submissions_disabled)
-# with api.build_kaggle_client() as kaggle:
-#     request = ApiGetLeaderboardRequest()
-#     request.competition_name = 'gemini-3'
-#     request.page_size = 30
-#     # request.page_token = page_token
-#     response = kaggle.competitions.competition_api_client.get_leaderboard(request)
-#     print(response.submissions[0:10])
-# for page in range(10):
-#     competitions = api.competitions_list(page_token=token)
-#     for x in range(20):
-#         try:
-#             comp_title = competitions.competitions[x].url.split('/')[-1]
-#             # print(comp_title)
-#             with api.build_kaggle_client() as kaggle:
-#                 request = ApiGetLeaderboardRequest()
-#                 request.competition_name = 'data-science-bowl-2019'
-#                 request.page_size = 30
-#                 # request.page_token = page_token
-#                 response = kaggle.competitions.competition_api_client.get_leaderboard(request)
-#                 print(response.submissions[0])
-#                 cnt += 1
-#                 print(cnt, cnt1)
-#         except Exception:
-#             cnt1+=1
-#     token = competitions.next_page_token
-# print(cnt)
-# print(comp_ref)
-# print(competitions.)
-# token = None
+class KaggleService:
 
-# for x in range(1,10):
-#     leaderboard = api.competition_leaderboard_view(
-#     competition="titanic"
-#     page_token=token
-#     )
-#     print(leaderboard)
-#     token = 
+    def __init__(self, api=None):
+        self.api = api or KaggleApi()
+        self.api.authenticate()
 
-# b = CompetitionApiClient().get_leaderboard(ApiGetLeaderboardRequest(competition_name='titanic'))
+    def get_competition(
+        self,
+        competition_slug,
+        search=None,
+        group=None,
+        category=None,
+        sort_by=None
+    ):
 
+        for page in range(1, 1000):
+            try:
+                response = self.api.competitions_list(
+                    page=page,
+                    search=search,
+                    group=group,
+                    category=category,
+                    sort_by=sort_by
+                )
 
-# with api.build_kaggle_client() as kaggle:
-#     request = ApiGetLeaderboardRequest()
-#     request.competition_name = 'vesuvius-challenge-surface-detection'
-#     request.page_size = 30
-#     # request.page_token = page_token
-#     response = kaggle.competitions.competition_api_client.get_leaderboard(request)
-#     print(response)
+                if response is None:
+                    print("Не найдено")
+                    break
 
-# b = api.competition_submissions(competition='bus-delay-starter')
+                for competition in response.competitions:
+                    slug = competition.ref.split('/')[-1]
+                    if slug == competition_slug:
+                        return competition
+                time.sleep(0.1)
 
-# print(b)
+            except Exception as e:
+                print(f"Упало с ошибкой {e}")
+                break
 
+        return None
+
+    def search_by_name_in_leaderboard(self, competition_name, team_name):
+        page_token = None
+        while True:
+            with self.api.build_kaggle_client() as kaggle_client:
+                request = ApiGetLeaderboardRequest()
+                request.competition_name = competition_name
+                request.page_size = 20
+                request.page_token = page_token
+                leaderboard = (
+                    kaggle_client
+                    .competitions
+                    .competition_api_client
+                    .get_leaderboard(request)
+                )
+
+            for team_data in leaderboard.submissions:
+
+                if team_name == team_data.team_name:
+                    return (team_data.submission_date, team_data.score)
+
+            if leaderboard.next_page_token == "":
+                return 'Not Found'
+
+            page_token = leaderboard.next_page_token
+            time.sleep(0.1)
+
+    def get_top_20_leaderboard(self, competition_name):
+        competition = self.api.competition_leaderboard_view(competition_name)
+        return competition
