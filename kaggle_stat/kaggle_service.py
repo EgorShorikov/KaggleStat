@@ -1,5 +1,6 @@
 from kaggle.api.kaggle_api_extended import KaggleApi, ApiGetLeaderboardRequest
 import time
+from kagglesdk.competitions.types.competition_api_service import ApiGetCompetitionRequest
 
 
 class KaggleService:
@@ -8,16 +9,16 @@ class KaggleService:
         self.api = api or KaggleApi()
         self.api.authenticate()
 
-    def get_competition(
+    def get_all_competitions(
         self,
-        competition_slug,
         search=None,
         group=None,
         category=None,
         sort_by=None
     ):
+        competitions = []
 
-        for page in range(1, 1000):
+        for page in range(1, 100):
             try:
                 response = self.api.competitions_list(
                     page=page,
@@ -32,16 +33,27 @@ class KaggleService:
                     break
 
                 for competition in response.competitions:
-                    slug = competition.ref.split('/')[-1]
-                    if slug == competition_slug:
-                        return competition
+                    competitions.append(competition)
+                    print(competition)
                 time.sleep(0.1)
 
             except Exception as e:
                 print(f"Упало с ошибкой {e}")
                 break
 
-        return None
+        return competitions
+
+    def get_competition_by_name(self, competition_slug):
+        with self.api.build_kaggle_client() as kaggle_client:
+            request = ApiGetCompetitionRequest()
+            request.competition_name = competition_slug
+            comp_info = (
+                kaggle_client
+                .competitions
+                .competition_api_client
+                .get_competition(request)
+            )
+            return comp_info
 
     def search_by_name_in_leaderboard(self, competition_name, team_name):
         page_token = None

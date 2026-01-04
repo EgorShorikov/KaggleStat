@@ -4,7 +4,7 @@ from django.db.models.deletion import CASCADE, SET_DEFAULT, SET_NULL
 
 class Contest(models.Model):
     '''Основная сущность соревнования Kaggle'''
-    kaggle_id = models.CharField(
+    kaggle_slug = models.CharField(
         verbose_name='Уникальный идентификатор контеста',
         max_length=50,
         unique=True
@@ -22,27 +22,38 @@ class Contest(models.Model):
         verbose_name='Количество участников',
         blank=True
     )
+    prize = models.CharField(
+        verbose_name='Вознаграждение',
+        max_length=20,
+    )
+    description = models.CharField(
+        verbose_name='Описание',
+        max_length=200,
+        default=''
+    )
+    image_url = models.CharField(
+        verbose_name='Ссылка на картинку',
+        max_length=500,
+        default=''
+    )
+
+    class Meta:
+        db_table = 'contest'
 
 
 class KaggleUser(models.Model):
     '''Пользователь Kaggle'''
-    user_name = models.CharField(
+    user_slug = models.CharField(
         verbose_name='Никнейм на платформе',
         max_length=50,
-    )
-    skill_level = models.CharField(
-        verbose_name='Уровень мастерства',
-        max_length=11,
-        blank=True
-    )
-    registered = models.DateTimeField(
-        verbose_name='Дата регистрации',
-        auto_now_add=True
     )
     contests = models.ManyToManyField(
         Contest,
         through='ParticipantContest'
     )
+
+    class Meta:
+        db_table = 'kaggle_user'
 
 
 class ParticipantContest(models.Model):
@@ -62,13 +73,13 @@ class ParticipantContest(models.Model):
     position = models.IntegerField(
         verbose_name='Позиция в таблице лидеров',
     )
-    submissions = models.IntegerField(
-        verbose_name='Количество посылок',
-    )
-    last_submission = models.DateTimeField(
-        verbose_name='Время последней отправки',
+    saved_at = models.DateTimeField(
+        verbose_name='Время сохранения участника соревнования',
         auto_now=True
     )
+
+    class Meta:
+        db_table = 'participant_contest'
 
 
 class LeaderBoard(models.Model):
@@ -84,3 +95,6 @@ class LeaderBoard(models.Model):
     data = models.JSONField(
         verbose_name='Данные лидерборда'
     )
+
+    class Meta:
+        db_table = 'leaderboard'
