@@ -37,6 +37,9 @@ class Contest(models.Model):
         default=''
     )
 
+    def __str__(self):
+        return f"{self.competition_slug}: {self.title}"
+
     class Meta:
         db_table = 'contest'
 
@@ -51,7 +54,7 @@ class Team(models.Model):
     contests = models.ManyToManyField(Contest)
 
     class Meta:
-        db_table = 'kaggle_user'
+        db_table = 'kaggle_team'
 
 
 # class ParticipantContest(models.Model):
