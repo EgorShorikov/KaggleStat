@@ -4,7 +4,7 @@ from django.db.models.deletion import CASCADE, SET_DEFAULT, SET_NULL
 
 class Contest(models.Model):
     '''Основная сущность соревнования Kaggle'''
-    kaggle_slug = models.CharField(
+    competition_slug = models.CharField(
         verbose_name='Уникальный идентификатор контеста',
         max_length=50,
         unique=True
@@ -41,45 +41,43 @@ class Contest(models.Model):
         db_table = 'contest'
 
 
-class KaggleUser(models.Model):
-    '''Пользователь Kaggle'''
-    user_slug = models.CharField(
-        verbose_name='Никнейм на платформе',
+class Team(models.Model):
+    '''Команда участник Kaggle'''
+    team_slug = models.CharField(
+        verbose_name='Название команды',
         max_length=50,
     )
-    contests = models.ManyToManyField(
-        Contest,
-        through='ParticipantContest'
-    )
+    team_id = models.IntegerField(verbose_name='Айди команды')
+    contests = models.ManyToManyField(Contest)
 
     class Meta:
         db_table = 'kaggle_user'
 
 
-class ParticipantContest(models.Model):
-    '''Участник соревнования'''
-    contest_id = models.ForeignKey(
-        Contest,
-        on_delete=CASCADE
-    )
-    kaggle_user_id = models.ForeignKey(
-        KaggleUser,
-        on_delete=CASCADE
-    )
-    score = models.FloatField(
-        verbose_name='Очки рейтинга',
-        blank=True
-    )
-    position = models.IntegerField(
-        verbose_name='Позиция в таблице лидеров',
-    )
-    saved_at = models.DateTimeField(
-        verbose_name='Время сохранения участника соревнования',
-        auto_now=True
-    )
+# class ParticipantContest(models.Model):
+#     '''Участник соревнования'''
+#     contest_id = models.ForeignKey(
+#         Contest,
+#         on_delete=CASCADE
+#     )
+#     kaggle_user_id = models.ForeignKey(
+#         KaggleUser,
+#         on_delete=CASCADE
+#     )
+#     score = models.FloatField(
+#         verbose_name='Очки рейтинга',
+#         blank=True
+#     )
+#     position = models.IntegerField(
+#         verbose_name='Позиция в таблице лидеров',
+#     )
+#     saved_at = models.DateTimeField(
+#         verbose_name='Время сохранения участника соревнования',
+#         auto_now=True
+#     )
 
-    class Meta:
-        db_table = 'participant_contest'
+#     class Meta:
+#         db_table = 'participant_contest'
 
 
 class LeaderBoard(models.Model):
@@ -94,6 +92,9 @@ class LeaderBoard(models.Model):
     )
     data = models.JSONField(
         verbose_name='Данные лидерборда'
+    )
+    version = models.IntegerField(
+        verbose_name='Версия записи позиций в лидерборде',
     )
 
     class Meta:

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from kaggle_service import KaggleService
+from .models import Contest
 
 
 FAKE_DATA = {
@@ -102,19 +103,7 @@ def index(request):
     thumbnail_image_url (str)
     host_name (str)
   """
-    kaggle_service = KaggleService()
-    real_data = []
-    competitions = kaggle_service.get_all_competitions(sort_by='prize')[:12]
-    for competition in competitions:
-        competition_info = {
-            'kaggle_slug': competition.ref.split('/')[-1],
-            'title': competition.title,
-            'deadline': competition.deadline,
-            'participant_count': competition.team_count,
-            'prize': competition.reward,
-            'description': competition.description
-        }
-        real_data.append(competition_info)
     template = 'homepage/index.html'
+    real_data = Contest.objects.all()
     context = {"competitions": real_data}
     return render(request, template, context)

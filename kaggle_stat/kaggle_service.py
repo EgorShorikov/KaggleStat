@@ -9,8 +9,9 @@ class KaggleService:
         self.api = api or KaggleApi()
         self.api.authenticate()
 
-    def get_all_competitions(
+    def get_n_pages_competitions(
         self,
+        n_pages,
         search=None,
         group=None,
         category=None,
@@ -18,7 +19,7 @@ class KaggleService:
     ):
         competitions = []
 
-        for page in range(1, 100):
+        for page in range(1, n_pages):
             try:
                 response = self.api.competitions_list(
                     page=page,
@@ -31,17 +32,16 @@ class KaggleService:
                 if response is None:
                     print("Не найдено")
                     break
-
+                competitions_updated = []
                 for competition in response.competitions:
-                    competitions.append(competition)
-                    print(competition)
+                    competitions_updated.append(self.get_competition_by_name(competition.ref.split('/')[-1]))
                 time.sleep(0.1)
 
             except Exception as e:
                 print(f"Упало с ошибкой {e}")
                 break
 
-        return competitions
+        return competitions_updated
 
     def get_competition_by_name(self, competition_slug):
         with self.api.build_kaggle_client() as kaggle_client:
@@ -55,12 +55,12 @@ class KaggleService:
             )
             return comp_info
 
-    def search_by_name_in_leaderboard(self, competition_name, team_name):
+    def search_by_name_in_leaderboard(self, competition_slug, team_name):
         page_token = None
         while True:
             with self.api.build_kaggle_client() as kaggle_client:
                 request = ApiGetLeaderboardRequest()
-                request.competition_name = competition_name
+                request.competition_name = competition_slug
                 request.page_size = 20
                 request.page_token = page_token
                 leaderboard = (
@@ -81,6 +81,6 @@ class KaggleService:
             page_token = leaderboard.next_page_token
             time.sleep(0.1)
 
-    def get_top_20_leaderboard(self, competition_name):
-        competition = self.api.competition_leaderboard_view(competition_name)
+    def get_top_n_leaderboard(self, competition_slug, n):
+        competition = self.api.competition_leaderboard_view(competition_slug, page_size=n)
         return competition
