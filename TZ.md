@@ -21,29 +21,24 @@
 
 ### 1. Contest (Соревнование)
 Основная сущность соревнования Kaggle.
--   `kaggle_id` (CharField): Уникальный идентификатор контеста
+-   `competition_slug` (CharField): Слаг контеста
 -   `title` (CharField): Название соревнования
 -   `deadline` (DateTimeField): Срок окончания
 -   `participant_count` (IntegerField): Количество участников
+-   `prize` (CharField): Награда
+-   `description` (CharField): Описание
+-   `image_url` (CharField): Ссылка на картинку соревнования
 
-### 2. KaggleUser (Пользователь Kaggle)
--   `user_name` (CharField): Никнейм на платформе
--   `skill_level` (CharField): Уровень мастерства (Novice, Contributor, Expert, Master, Grandmaster)
--   `registered` (DateField): Дата регистрации
--   `contests` (ManyToManyField): Связь контеста с пользователем (через модель ParticipantContest)
+### 2. Team (Пользователь Kaggle)
+-   `team_slug` (CharField): Никнейм команды на платформе
+-   `team_id` (IntegerField): Айди команды в лидерборде на платформе
+-   `contests` (ManyToManyField): Связь контеста с пользователем (через модель ContestTeam)
 
-### 3. ParticipantContest (Участник соревнования)
--   `contest_id` (FK): Ссылка на контест
--   `kaggle_user_id` (FK): Ссылка на пользователя
--   `score` (FloatField): Основная характеристика оценивания позиции в рейтинге с помощью метрики
--   `position` (IntegerField): Позиция в таблице лидеров
--   `submissions` (IntegerField): Количество посылок
--   `last_submission` (DateTimeField): Время последней отправки
-
-### 4. LeaderBoard (Таблица лидеров)
+### 3. LeaderBoard (Таблица лидеров)
 -   `contest_id` (FK): Ссылка на контест
 -   `saved_at` (DateTimeField): Время сохранения таблицы
 -   `data` (JSONField): Данные лидерборда
+-   `version` (InteferField): Версия снимка лидерборда
 
 ## 4. Ключевой функционал
 
@@ -63,3 +58,35 @@
 
 -   **Интеграция:** Использование Kaggle API
 -   **Аналитика и визуализация:** pandas, chart.js
+
+
+## Изменения
+
+- **Было:**
+
+    ## 3. Модели данных
+
+### 1. Contest (Соревнование)
+Основная сущность соревнования Kaggle.
+-   `kaggle_id` (CharField): Уникальный идентификатор контеста
+-   `title` (CharField): Название соревнования
+-   `deadline` (DateTimeField): Срок окончания
+-   `participant_count` (IntegerField): Количество участников
+
+### 2. KaggleUser (Пользователь Kaggle)
+-   `user_name` (CharField): Никнейм на платформе
+-   `skill_level` (CharField): Уровень мастерства (Novice, Contributor, Expert, Master, Grandmaster)
+-   `registered` (DateField): Дата регистрации
+-   `contests` (ManyToManyField): Связь контеста с пользователем (через модель ParticipantContest)
+
+### 3. ParticipantContest (Участники соревнования)
+-   `contest_id` (FK): Ссылка на контест
+-   `kaggle_team_id` (FK): Айди команды
+-   `score` (FloatField): Основная характеристика оценивания позиции в рейтинге с помощью метрики
+-   `position` (IntegerField): Позиция в таблице лидеров
+-   `submission_date` (DateTimeField): Время подачи посылки
+
+### 4. LeaderBoard (Таблица лидеров)
+-   `contest_id` (FK): Ссылка на контест
+-   `saved_at` (DateTimeField): Время сохранения таблицы
+-   `data` (JSONField): Данные лидерборда

@@ -7,4 +7,5 @@ app_name = 'dash_board'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('dashboard/<slug:dashboard_slug>', views.dashboard, name='dashboard')
 ]
