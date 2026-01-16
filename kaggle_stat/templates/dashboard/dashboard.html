@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}График и поиск{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                    <form method="get">
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Поиск</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 justify-content-center">
+                <canvas id="positionChart"></canvas>
+            </div>
+            <div class="col-md-6 justify-content-center">
+                <canvas id="scoreChart"></canvas>
+            </div>
+            <hr>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx_for_position = document.getElementById('positionChart').getContext('2d');
+        const ctx_for_score = document.getElementById('scoreChart').getContext('2d');
+
+        const positionChart = new Chart(ctx_for_position, {
+            type: 'line',
+            data: {
+                labels: {{ labels|safe }},
+                datasets: [{
+                    label: 'Позиция в лидерборде',
+                    data: {{ positions }},
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        reverse: true,
+                        min: 1,
+                        title: {
+                            display: true,
+                            text: 'Позиция'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Дата снимка лидерборда'
+                        },
+                    }
+                }
+            }
+        });
+
+        const scoreChart = new Chart(ctx_for_score, {
+            type: 'line',
+            data: {
+                labels: {{ labels|safe }},
+                datasets: [{
+                    label: 'Очки',
+                    data: {{ scores }},
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Очки'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Дата снимка лидерборда'
+                        },
+                    }
+                }
+            }
+        });
+    </script>
+
+{% endblock %}

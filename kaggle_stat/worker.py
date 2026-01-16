@@ -18,27 +18,31 @@ class Worker:
         self.service = KaggleService()
 
 
-    def load_n_pages_competitions(self, n_pages):
-        competitions = self.service.get_n_pages_competitions(n_pages=n_pages, sort_by='relevance')
+    def load_n_pages_competitions(self, start_page, end_page):
+        competitions = self.service.get_n_pages_competitions(start_page, end_page, sort_by='relevance')
         for competition in competitions:
+            print(competition)
             Contest.objects.update_or_create(
-                kaggle_slug=competition.ref.split('/')[-1],
+                competition_slug=competition.ref.split('/')[-1],
                 defaults={
                     'title': competition.title,
                     'deadline': competition.deadline,
                     'participant_count': competition.team_count,
                     'prize': competition.reward,
                     'description': competition.description,
-                    'image_url': competition.thumbnail_image_url
+                    'image_url': competition.thumbnail_image_url,
+                    'url': competition.url,
+                    'organization_name': competition.organization_name,
+                    'organization_ref': competition.organization_ref
                 }
             )
 
-    def load_leaderboard(self):
+    def load_leaderboard(self, participant_count):
         competitions = Contest.objects.all()
         current_version = LeaderBoard.objects.aggregate(max_version=Max('version'))['max_version']
         for competition in competitions:
             competition_slug = competition.competition_slug
-            submissions = self.service.get_top_n_leaderboard(competition_slug, 50)
+            submissions = self.service.get_top_n_leaderboard(competition_slug, participant_count)
 
             leaderboard_data = []
             for position, submission in enumerate(submissions, start=1):
@@ -60,13 +64,9 @@ class Worker:
             time.sleep(1.25)
 
     def load_teams(self):
-        #     team_slug = models.CharField(
-        #     verbose_name='Название команды',
-        #     max_length=50,
-        # )
-        # team_id = models.IntegerField(verbose_name='Айди команды')
-        # contests = models.ManyToManyField(Contest)
-        current_version = LeaderBoard.objects.aggregate(max_version=Max('version'))['max_version']
+        current_version = (LeaderBoard.objects
+                                      .aggregate(max_version=Max('version'))
+                                      ['max_version'])
         leaderboards = (LeaderBoard.objects
                                    .values('contest_id', 'data')
                                    .filter(version=current_version))
@@ -89,7 +89,7 @@ class Worker:
                             'team_slug': team_name,
                         }
                     )
-        
+
         for team_id, contests in team_id_contests.items():
             team = Team.objects.get(team_id=team_id)
             contest = Contest.objects.filter(id__in=contests)
@@ -97,19 +97,18 @@ class Worker:
 
 
 if __name__ == "__main__":
-    # worker = Worker()
-    # worker.load_leaderboard()
-    # worker.load_n_pages_competitions(35)
+    worker = Worker()
+    worker.load_leaderboard(100)
+    # worker.load_n_pages_competitions(1, 5)
     # worker.load_teams()
-    # Вместо get() используйте filter()
-    teams = Team.objects.filter(team_slug='tascj')
+    # teams = Team.objects.filter(team_slug='tascj')
 
-    print(f"Найдено команд: {teams.count()}")
+    # print(f"Найдено команд: {teams.count()}")
 
     # for team in teams:
     #     print(f"\nКоманда ID: {team.team_id}")
     #     contests = team.contests.all()
     #     print(f"Контестов у этой команды: {contests.count()}")
-        
+
     #     for contest in contests[:3]:  # Первые 3 контеста
     #         print(f"  - {contest.competition_slug}")

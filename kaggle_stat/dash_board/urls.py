@@ -1,11 +1,11 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from . import views
 
 
-app_name = 'dash_board'
+app_name = 'statistics'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('dashboard/<slug:dashboard_slug>', views.dashboard, name='dashboard')
+    path('dashboard', views.dashboard_list, name='dashboard_list'),
+    path('dashboard/<slug:dashboard_slug>', views.dashboard_detail, name='dashboard_detail')
 ]

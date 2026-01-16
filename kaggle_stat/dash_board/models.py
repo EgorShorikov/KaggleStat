@@ -36,6 +36,21 @@ class Contest(models.Model):
         max_length=500,
         default=''
     )
+    organization_name = models.CharField(
+        verbose_name='Название организации, проводящей контест',
+        max_length=200,
+        default=''
+    )
+    organization_ref = models.CharField(
+        verbose_name='Слаг организации',
+        max_length=500,
+        default=''
+    )
+    url = models.CharField(
+        verbose_name='Ссылка на контест на кагле',
+        max_length=500,
+        default=''
+    )
 
     def __str__(self):
         return f"{self.competition_slug}: {self.title}"

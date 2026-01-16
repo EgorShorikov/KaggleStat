@@ -11,15 +11,14 @@ class KaggleService:
 
     def get_n_pages_competitions(
         self,
-        n_pages,
+        start_page,
+        end_page,
         search=None,
         group=None,
         category=None,
         sort_by=None
     ):
-        competitions = []
-
-        for page in range(1, n_pages):
+        for page in range(start_page, end_page + 1):
             try:
                 response = self.api.competitions_list(
                     page=page,
@@ -28,14 +27,17 @@ class KaggleService:
                     category=category,
                     sort_by=sort_by
                 )
+                print(response.competitions)
 
                 if response is None:
                     print("Не найдено")
                     break
                 competitions_updated = []
                 for competition in response.competitions:
-                    competitions_updated.append(self.get_competition_by_name(competition.ref.split('/')[-1]))
-                time.sleep(0.1)
+                    if not competition.submissions_disabled:
+                        competitions_updated.append(self.get_competition_by_name(competition.ref.split('/')[-1]))
+                        time.sleep(0.5)
+                time.sleep(1)
 
             except Exception as e:
                 print(f"Упало с ошибкой {e}")

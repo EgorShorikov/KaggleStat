@@ -1,94 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block content %}
-<div class='container pt-3 mt-3'>
-  <div class='row pt-5 mt-3'>
-    {% for competition in competitions %}
-    <div class="col-6 col-md-4 my-3">
-      <div class="card h-100">
-        <div class="d-flex h-100">
-          <div class="d-flex align-items-center justify-content-center p-3 border"
-              style="width: 100px;">
-            <img src="{{ competition.image_url }}" 
-              class="img-fluid"
-              style="max-width: 70px; max-height: 70px; object-fit: contain;"
-              alt="Логотип">
-          </div>
-          <div class="flex-grow-1 p-3">
-            <h6 class="card-title fw-bold mb-2">{{ competition.title|truncatechars:60 }}</h6>
-            <p class="card-text small text-muted mb-2">{{ competition.short_description }}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="badge bg-secondary small">{{ competition.prize }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="d-grid gap-2">
-            <p>{{ competition.description|truncatechars:60 }}</p>
-          </div>
-        </div>
-        <div class="card-footer">
-          <div class="d-grid gap-2">
-            <a href="{% url 'dash_board:dashboard' dashboard_slug=competition.competition_slug %}" class="btn btn-outline-primary">DashBoard</a>
-          </div>
-        </div>
-      </div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <form method="get">
+        {{ form_contests.as_p }}
+        <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
+        <button type="submit" class="btn btn-primary">Поиск</button>
+      </form>
     </div>
-    {% empty %}
-    <div class="col-12">
-      <div class="alert alert-info text-center">
-        Конкурсы не найдены
-      </div>
+    <hr>
+    <div class="col-md-6">
+      <form method="get">
+        {{ form_teams.as_p }}
+        <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
+        <button type="submit" class="btn btn-primary">Поиск</button>
+      </form>
     </div>
-    {% endfor %}
-  </div>
-  
-  {% if competitions.has_other_pages %}
-    <nav aria-label="Page navigation" class="mt-5">
-      <ul class="pagination justify-content-center">
-        {% if competitions.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ competitions.previous_page_number }}" aria-label="Previous">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <span class="page-link" aria-hidden="true">&laquo;</span>
-          </li>
-        {% endif %}
-        
-        {% for num in competitions.paginator.page_range %}
-          {% if competitions.number == num %}
-            <li class="page-item active" aria-current="page">
-              <span class="page-link">{{ num }}</span>
-            </li>
-          {% elif num > competitions.number|add:'-3' and num < competitions.number|add:'3' %}
-            <li class="page-item">
-              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-            </li>
-          {% endif %}
-        {% endfor %}
-        
-        {% if competitions.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ competitions.next_page_number }}" aria-label="Next">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <span class="page-link" aria-hidden="true">&raquo;</span>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
-  {% endif %}
-  
-  <div class="text-center text-muted small mt-2">
-    Страница {{ competitions.number }} из {{ competitions.paginator.num_pages }}
-    | Показано {{ competitions.start_index }}–{{ competitions.end_index }} из {{ competitions.paginator.count }} конкурсов
   </div>
 </div>
 {% endblock content %}

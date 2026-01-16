@@ -18,38 +18,31 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">              
             <a
-              class="nav-link {% if view_name == 'dash_board:index' %} active {% endif %}" 
-              href="{% url 'dash_board:index' %}"
+              class="nav-link {% if view_name == 'statistics:index' %} active {% endif %}" 
+              href="{% url 'statistics:index' %}"
               >
               Главная 
             </a> 
           </li>
           <li class="nav-item">
             <a 
-              class="nav-link {% if view_name == 'dash_board:index' %} active {% endif %}" 
-              href="{% url 'dash_board:index' %}"
+              class="nav-link {% if view_name == 'statistics:dashboard_list' %} active {% endif %}" 
+              href="{% url 'statistics:dashboard_list' %}"
               >
-              Регистрация
+              Соревнования
             </a> 
           </li>
           <li class="nav-item">
             <a 
-              class="nav-link {% if view_name == 'dash_board:index' %} active {% endif %}"
-              href="{% url 'dash_board:index' %}"
+              class="nav-link {% if view_name == 'statistics:dashboard_list' %} active {% endif %}"
+              href="{% url 'statistics:index' %}"
             >
               Авторизация
             </a> 
           </li>
         </ul>
         {% endwith %}
-      </div> 
-      <a class="navbar-brand" href="{% url 'dash_board:index' %}">
-        <img src="{% static 'img/logo.png' %}" height="50" class="d-inline-block align-top" alt="">            
-      </a>  
-      <form class="d-flex ms-lg-3 mt-3 mt-lg-0">
-          <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Найти</button>
-      </form>     
+      </div>  
     </div>
   </nav>
 </header>
