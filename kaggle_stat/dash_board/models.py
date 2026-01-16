@@ -72,32 +72,6 @@ class Team(models.Model):
         db_table = 'kaggle_team'
 
 
-# class ParticipantContest(models.Model):
-#     '''Участник соревнования'''
-#     contest_id = models.ForeignKey(
-#         Contest,
-#         on_delete=CASCADE
-#     )
-#     kaggle_user_id = models.ForeignKey(
-#         KaggleUser,
-#         on_delete=CASCADE
-#     )
-#     score = models.FloatField(
-#         verbose_name='Очки рейтинга',
-#         blank=True
-#     )
-#     position = models.IntegerField(
-#         verbose_name='Позиция в таблице лидеров',
-#     )
-#     saved_at = models.DateTimeField(
-#         verbose_name='Время сохранения участника соревнования',
-#         auto_now=True
-#     )
-
-#     class Meta:
-#         db_table = 'participant_contest'
-
-
 class LeaderBoard(models.Model):
     '''Таблица лидеров'''
     contest_id = models.ForeignKey(

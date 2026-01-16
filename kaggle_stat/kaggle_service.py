@@ -27,17 +27,15 @@ class KaggleService:
                     category=category,
                     sort_by=sort_by
                 )
-                print(response.competitions)
 
                 if response is None:
-                    print("Не найдено")
                     break
                 competitions_updated = []
                 for competition in response.competitions:
                     if not competition.submissions_disabled:
+                        time.sleep(2)
                         competitions_updated.append(self.get_competition_by_name(competition.ref.split('/')[-1]))
-                        time.sleep(0.5)
-                time.sleep(1)
+                time.sleep(5)
 
             except Exception as e:
                 print(f"Упало с ошибкой {e}")
