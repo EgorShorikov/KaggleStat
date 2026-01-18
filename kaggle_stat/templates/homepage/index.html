@@ -2,21 +2,22 @@
 {% load static %}
 {% block content %}
 <div class="container">
-  <div class="row">
+  <div class="row justify-content-center">
     <div class="col-md-6">
-      <form method="get">
-        {{ form_contests.as_p }}
-        <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
-        <button type="submit" class="btn btn-primary">Поиск</button>
-      </form>
-    </div>
-    <hr>
-    <div class="col-md-6">
-      <form method="get">
-        {{ form_teams.as_p }}
-        <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
-        <button type="submit" class="btn btn-primary">Поиск</button>
-      </form>
+      <div class="card mt-5">
+        <div class="card-body">
+          <h2 class="text-center mb-4">Поиск соревнований</h2>
+          <form method="get" action="{% url 'statistics:dashboard_list' %}">
+            <div class="mb-3">
+              {{ form.team_slug.label_tag }}
+              {{ form.team_slug }}
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg">Найти</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>

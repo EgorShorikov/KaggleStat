@@ -6,10 +6,24 @@ from dash_board.models import Contest
 class Command(BaseCommand):
     help = 'Загрузка конкурсов'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--from-page',
+            type=int,
+            default=1,
+            help='С страницы'
+        )
+        parser.add_argument(
+            '--to-page',
+            type=int,
+            default=36,
+            help='По страницу'
+        )
+
     def handle(self, *args, **options):
         service = KaggleService()
         competitions = service.get_n_pages_competitions(
-            1, 36, sort_by='relevance'
+            options['from_page'], options['to_page'], sort_by='relevance'
         )
 
         for competition in competitions:

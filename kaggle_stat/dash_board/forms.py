@@ -59,13 +59,14 @@ class SearchTeamForm(forms.Form):
         return timezone.now()
 
 
-class SearchCompetitionForm(forms.Form):
-    competition_slug = forms.CharField(
-        label='Название соревнования',
-        max_length=200,
+class ContestSearchForm(forms.Form):
+    team_slug = forms.CharField(
+        label='Название команды',
+        max_length=100,
         required=True,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Введите название соревнования...',
-            'class': 'form-control'
+            'class': 'form-control form-control-lg',
+            'placeholder': 'Введите название команды',
+            'id': 'team_slug'
         })
     )

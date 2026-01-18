@@ -44,7 +44,7 @@ class Command(BaseCommand):
                 version=current_version + 1
             )
 
-            time.sleep(1.75)
+            time.sleep(2)
             self.stdout.write(f'Загружен лидерборд для {
                 competition.competition_slug
             }')

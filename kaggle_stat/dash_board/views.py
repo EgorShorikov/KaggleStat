@@ -1,28 +1,49 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.db.models import Q
 from .models import Contest, LeaderBoard
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .forms import SearchTeamForm, SearchCompetitionForm
+from .forms import SearchTeamForm, ContestSearchForm
 import json
 
 
 def index(request):
-    return render(request, 'homepage/index.html')
+    form = ContestSearchForm()
+
+    if request.method == 'GET' and 'team_slug' in request.GET:
+        form = ContestSearchForm(request.GET)
+        if form.is_valid():
+            team_slug = form.cleaned_data['team_slug']
+            return redirect(f'/dashboard/?team_slug={team_slug}')
+
+    context = {'form': form}
+    return render(request, 'homepage/index.html', context)
 
 
 def dashboard_list(request):
-    template = 'dashboard/index.html'
+    team_slug = request.GET.get('team_slug', '')
+
     contests = Contest.objects.all()
+    if team_slug:
+        contests = contests.filter(
+            Q(team__team_slug__icontains=team_slug)
+        ).distinct()
+
     paginator = Paginator(contests, 21)
     page = request.GET.get('page')
 
     try:
-        context = paginator.page(page)
+        competitions = paginator.page(page)
     except PageNotAnInteger:
-        context = paginator.page(1)
+        competitions = paginator.page(1)
     except EmptyPage:
-        context = paginator.page(paginator.num_pages)
+        competitions = paginator.page(paginator.num_pages)
 
-    context = {'competitions': context}
+    context = {
+        'competitions': competitions,
+        'search_query': team_slug,
+    }
+    template = 'dashboard/index.html'
+
     return render(request, template, context)
 
 
@@ -48,13 +69,13 @@ def dashboard_detail(request, dashboard_slug):
                 for lb in snapshot.data['leaderboard']:
                     if lb['team_name'].lower() == searched_team.lower():
                         labels.append(
-                            snapshot.saved_at.strftime('%Y-%m-%d %H:%M')
+                            snapshot.saved_at.strftime('%d.%m.%Y %H:%M')
                         )
                         positions.append(int(lb['position']))
                         scores.append(float(lb['score']))
                         break
                 else:
-                    labels.append(snapshot.saved_at.strftime('%Y-%m-%d %H:%M'))
+                    labels.append(snapshot.saved_at.strftime('%d.%m.%Y %H:%M'))
                     positions.append(None)
                     scores.append(None)
 

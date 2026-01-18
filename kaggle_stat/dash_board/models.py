@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.deletion import CASCADE, SET_DEFAULT, SET_NULL
+from django.db.models.deletion import CASCADE
 
 
 class Contest(models.Model):
@@ -57,6 +57,8 @@ class Contest(models.Model):
 
     class Meta:
         db_table = 'contest'
+        verbose_name = 'Соревнование'
+        verbose_name_plural = 'Соревнования'
 
 
 class Team(models.Model):
@@ -70,6 +72,8 @@ class Team(models.Model):
 
     class Meta:
         db_table = 'kaggle_team'
+        verbose_name = 'Команда'
+        verbose_name_plural = 'Команды'
 
 
 class LeaderBoard(models.Model):
@@ -91,3 +95,5 @@ class LeaderBoard(models.Model):
 
     class Meta:
         db_table = 'leaderboard'
+        verbose_name = 'Таблица лидеров'
+        verbose_name_plural = 'Taблицы лидеров'
