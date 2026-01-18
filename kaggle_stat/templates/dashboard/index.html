@@ -5,7 +5,7 @@
 <div class='container'>
   <div class='row'>
     {% for competition in competitions %}
-    <div class="col-6 col-md-4 my-3">
+    <div class="col-12 col-md-4 my-3">
       <div class="card h-100">
         <div class="d-flex h-100">
           <div class="d-flex align-items-center justify-content-center p-3 border"
@@ -50,7 +50,9 @@
       <ul class="pagination justify-content-center">
         {% if competitions.has_previous %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ competitions.previous_page_number }}" aria-label="Previous">
+            <a class="page-link" 
+               href="?page={{ competitions.previous_page_number }}{% if request.GET.team_slug %}&team_slug={{ request.GET.team_slug }}{% endif %}" 
+               aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
@@ -67,14 +69,19 @@
             </li>
           {% elif num > competitions.number|add:'-3' and num < competitions.number|add:'3' %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+              <a class="page-link" 
+                 href="?page={{ num }}{% if request.GET.team_slug %}&team_slug={{ request.GET.team_slug }}{% endif %}">
+                {{ num }}
+              </a>
             </li>
           {% endif %}
         {% endfor %}
         
         {% if competitions.has_next %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ competitions.next_page_number }}" aria-label="Next">
+            <a class="page-link" 
+               href="?page={{ competitions.next_page_number }}{% if request.GET.team_slug %}&team_slug={{ request.GET.team_slug }}{% endif %}" 
+               aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
@@ -92,4 +99,5 @@
     | Показано {{ competitions.start_index }}–{{ competitions.end_index }} из {{ competitions.paginator.count }} конкурсов
   </div>
 </div>
+
 {% endblock content %}
