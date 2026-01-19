@@ -25,14 +25,14 @@ class Command(BaseCommand):
         competitions = service.get_n_pages_competitions(
             options['from_page'], options['to_page'], sort_by='relevance'
         )
-
         for competition in competitions:
+            print(competition.thumbnail_image_url)
             Contest.objects.update_or_create(
                 competition_slug=competition.ref.split('/')[-1],
                 defaults={
                     'title': competition.title,
-                    'deadline': competition.deadline,
                     'participant_count': competition.team_count,
+                    'deadline': competition.deadline,
                     'prize': competition.reward,
                     'description': competition.description,
                     'image_url': competition.thumbnail_image_url,

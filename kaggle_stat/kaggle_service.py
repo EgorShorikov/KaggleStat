@@ -18,6 +18,7 @@ class KaggleService:
         category=None,
         sort_by=None
     ):
+        competitions_updated = []
         for page in range(start_page, end_page + 1):
             try:
                 response = self.api.competitions_list(
@@ -30,16 +31,17 @@ class KaggleService:
 
                 if response is None:
                     break
-                competitions_updated = []
+
                 for competition in response.competitions:
                     if not competition.submissions_disabled:
                         time.sleep(1.5)
-                        competitions_updated.append(self.get_competition_by_name(competition.ref.split('/')[-1]))
+                        competitions_updated.append(
+                            self.get_competition_by_name(competition.ref.split('/')[-1])
+                        )
                 time.sleep(2)
 
             except Exception as e:
-                print(f"Упало с ошибкой {e}")
-                break
+                return competitions_updated
 
         return competitions_updated
 
